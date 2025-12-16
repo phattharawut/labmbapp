@@ -1,16 +1,12 @@
 package com.example.lab3layout
 
-import android.inputmethodservice.Keyboard
-import android.media.Image
 import android.os.Bundle
-import android.text.style.BackgroundColorSpan
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
-import androidx.compose.foundation.content.MediaType.Companion.Image
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -30,18 +26,14 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.semantics.Role.Companion.Image
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.constraintlayout.compose.ConstraintLayout
-import androidx.core.provider.FontsContractCompat
 import com.example.lab3layout.ui.theme.Lab3LayoutTheme
-
 
 
 class MainActivity : ComponentActivity() {
@@ -51,7 +43,7 @@ class MainActivity : ComponentActivity() {
         setContent {
             Lab3LayoutTheme {
                 Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
-                    BackGroundBox()
+                    ASS03()
                 }
             }
         }
@@ -312,23 +304,20 @@ fun BackGroundBox(modifier: Modifier = Modifier) {
             .fillMaxSize()
             .wrapContentSize(unbounded = true, align = Alignment.Center)
             .statusBarsPadding()
-            .border(
-                width = 2.dp,
-                color = Color.Green.copy(alpha = 0.5f),
-                shape = RoundedCornerShape(size = 28.dp)
-            )
+
     ) {
 
         Image(
-            painter = painterResource(id = R.drawable.cats),
+            painter = painterResource(id = R.drawable. _760185875589),
             contentDescription = null,
             contentScale = ContentScale.Fit,
-            modifier = Modifier.size(size = 300.dp)
+            modifier = Modifier
+                .size(size = 300.dp)
                 .padding(all = 35.dp)
         )
 
         Text(
-            text = "Happy Cat!",
+            text = "Happy brithday my friend\n Pie",
             fontSize = 30.sp,
             color = Color(0xFFFF80CC),
             modifier = modifier
@@ -345,6 +334,76 @@ fun BackGroundBox(modifier: Modifier = Modifier) {
         )
     }
 }
+@Composable
+fun ASS03(modifier: Modifier = Modifier) {
+    Box(
+        modifier = Modifier.fillMaxSize()
+    ) {
+        Image(
+            painter = painterResource(id = R.drawable.background),
+            contentDescription = null,
+            contentScale = ContentScale.Crop,
+            alpha = 0.5F
+        )
+    }
+
+    Box(
+        modifier = Modifier
+            .fillMaxSize()
+            .wrapContentSize(unbounded = true, align = Alignment.Center)
+            .statusBarsPadding()
+
+    ) {
+
+        Image(
+            painter = painterResource(id = R.drawable._760185875589),
+            contentDescription = null,
+            contentScale = ContentScale.Fit,
+            modifier = Modifier
+                .size(size = 300.dp)
+                .padding(all = 35.dp)
+
+        )
+
+        Text(
+            text = "Happy brithday my friend \n Pie",
+            fontSize = 30.sp,
+            color = Color(0xFF000000),
+            modifier = modifier
+                .padding(all = 5.dp)
+                .align(Alignment.TopCenter)
+        )
+
+    }
+    Box(
+        modifier = Modifier
+            .fillMaxSize()
+            .wrapContentSize(unbounded = true, align = Alignment.BottomEnd)
+            .statusBarsPadding()
+
+    ) {
+
+        Image(
+            painter = painterResource(id = R.drawable.studentphoto),
+            contentDescription = null,
+            contentScale = ContentScale.Fit,
+            modifier = Modifier
+                .size(size = 200.dp)
+                .padding(all = 35.dp)
+
+        )
+
+        Text(
+            text = "Form Pooh",
+            fontSize = 25.sp,
+            color = Color(0xFF000000),
+            modifier = modifier
+                .padding(all = 5.dp)
+                .align(Alignment.TopCenter)
+        )
+
+    }
+}
 
 
 
@@ -353,6 +412,6 @@ fun BackGroundBox(modifier: Modifier = Modifier) {
 @Composable
 fun GreetingPreview() {
     Lab3LayoutTheme {
-        BackGroundBox()
+        ASS03()
     }
 }
