@@ -2,6 +2,7 @@ package com.example.lab4uicontrols
 
 import android.app.TimePickerDialog
 import android.os.Bundle
+import android.provider.ContactsContract
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
@@ -21,6 +22,8 @@ import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.DateRange
 import androidx.compose.material3.Button
+import androidx.compose.material3.Checkbox
+import androidx.compose.material3.DatePickerDialog
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExposedDropdownMenuBox
@@ -29,12 +32,16 @@ import androidx.compose.material3.FilledIconButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MenuAnchorType
 import androidx.compose.material3.OutlinedTextField
+import androidx.compose.material3.RadioButton
+import androidx.compose.material3.RadioButtonDefaults
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SegmentedButtonDefaults.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
@@ -44,6 +51,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
+import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -57,7 +65,7 @@ class MainActivity : ComponentActivity() {
         setContent {
             Lab4UIcontrolsTheme {
                 Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
-                    MyScreen(
+                    MyScreen2(
 
                         modifier = Modifier.padding(innerPadding)
                     )
@@ -230,10 +238,6 @@ fun MyScreen(modifier: Modifier = Modifier) {
             }
         )
 
-
-
-
-
         Spacer(modifier = Modifier.height(10.dp))
 
         Button(
@@ -269,9 +273,241 @@ fun MyScreen(modifier: Modifier = Modifier) {
                     fontSize = 18.sp
                 )
             }
+
         }
     }
 }
+
+@Composable
+fun AccContent(
+    username: String, onUsernameChange: (String) -> Unit,
+    password: String, onPasswordChange: (String) -> Unit,
+
+
+) {
+    Column(modifier = Modifier.padding(horizontal = 16.dp)) {
+        OutlinedTextField(
+            modifier = Modifier.width(400.dp),
+            value = username,
+            onValueChange = onUsernameChange,
+            label = { Text(text = "Username") }
+        )
+
+        OutlinedTextField(
+            modifier = Modifier.width(400.dp),
+            value = password,
+            onValueChange = onPasswordChange,
+            label = { Text(text = "Password") },
+            visualTransformation = PasswordVisualTransformation()
+        )
+
+
+    }
+}
+
+@Composable
+fun EmailContent(
+    email: String , onEmailChange: (String) -> Unit ,
+
+    ) {
+    Column(modifier = Modifier.padding(horizontal = 16.dp)) {
+
+
+        OutlinedTextField(
+            modifier = Modifier.width(400.dp),
+            value = email,
+            onValueChange = onEmailChange,
+            label = { Text(text = "E-mail") }
+        )
+    }
+}
+@Composable
+fun GenderSelection(
+    selectedItem: String?,
+    onSelectedGenderChange: (String) -> Unit
+) {
+    val genderList = listOf("Male", "Female", "Other")
+
+    Text(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(horizontal = 16.dp, vertical = 5.dp)
+            ,
+
+        text = "Gender: ${selectedItem ?: "Not selected"}"
+    )
+
+    Row(
+        modifier = Modifier.padding(horizontal = 16.dp)
+    ) {
+        genderList.forEach { gender ->
+            Row(
+                verticalAlignment = Alignment.CenterVertically,
+                modifier = Modifier.padding(end = 16.dp) // กำหนดระยะห่างระหว่างตัวเลือก
+            ) {
+                RadioButton(
+                    selected = selectedItem == gender,
+                    onClick = {
+                        onSelectedGenderChange(gender)
+                    },
+                    colors = RadioButtonDefaults.colors(
+                        selectedColor = Color.Magenta // เปลี่ยนสีของ RadioButton เมื่อเลือก
+                    )
+                )
+                Text(text = gender, fontSize = 15.sp)
+            }
+        }
+    }
+}
+
+@Composable
+fun DateContent(
+    selectedDate: String,  // รับค่าที่เลือกวันที่
+    onDateSelected: (String) -> Unit // callback สำหรับวันที่ที่เลือก
+) {
+    val mContext = LocalContext.current
+    val mCalendar = Calendar.getInstance()
+    val currentYear = mCalendar.get(Calendar.YEAR)
+    val currentMonth = mCalendar.get(Calendar.MONTH)
+    val currentDay = mCalendar.get(Calendar.DAY_OF_MONTH)
+
+    // Creating a DatePickerDialog
+    val mDatePickerDialog = android.app.DatePickerDialog(
+        mContext,
+        { _, year: Int, month: Int, dayOfMonth: Int ->
+            val monthStr = if (month + 1 < 10) "0${month + 1}" else "${month + 1}"
+            val dayStr = if (dayOfMonth < 10) "0$dayOfMonth" else "$dayOfMonth"
+            onDateSelected("$year-$monthStr-$dayStr") // ส่งวันที่ในรูปแบบ YYYY-MM-DD
+        },
+        currentYear,
+        currentMonth,
+        currentDay
+    )
+
+    Row(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(start = 10.dp, top = 8.dp, bottom = 8.dp),
+        verticalAlignment = Alignment.CenterVertically,
+    ) {
+        Text(
+            modifier = Modifier.padding(all = 5.dp),
+            text = "Select Date of Birth"
+        )
+
+        // DatePicker Button
+        FilledIconButton(onClick = { mDatePickerDialog.show() }) {
+            Icon(
+                modifier = Modifier.size(30.dp),
+                imageVector = Icons.Outlined.DateRange,
+                contentDescription = "Date Icon"
+            )
+        }
+
+        // Display the selected date
+        Text(text = "Selected Date of Birth: $selectedDate")
+    }
+}
+
+
+
+@Composable
+fun MyScreen2(modifier: Modifier = Modifier) {
+
+    // State variables
+    var textInformation by rememberSaveable { mutableStateOf("") }
+    var username by rememberSaveable { mutableStateOf("") }
+    var password by rememberSaveable { mutableStateOf("") }
+
+
+    var selectedGender by remember { mutableStateOf<String?>(null) }
+    var email by rememberSaveable { mutableStateOf("") }
+
+    var selectedDate by remember { mutableStateOf("Not Selected") }
+
+    Column(
+        modifier = modifier
+            .fillMaxSize()
+            .padding(all = 16.dp),
+        horizontalAlignment = Alignment.CenterHorizontally
+    ) {
+
+        Text(
+            modifier = Modifier.padding(all = 10.dp),
+            text = "Register Form",
+            fontWeight = FontWeight.Bold,
+            fontSize = 25.sp
+        )
+
+        // UI State and Event
+        AccContent(
+            username = username,
+            onUsernameChange = { username = it },
+            password = password,
+            onPasswordChange = { password = it }
+        )
+
+        // This part in MyScreen2 is correct
+        GenderSelection(
+            selectedItem = selectedGender,
+            onSelectedGenderChange = { gender -> selectedGender = gender }
+        )
+
+        EmailContent(
+            email = email,
+            onEmailChange = { email = it },
+
+        )
+        DateContent(
+            selectedDate = selectedDate,
+            onDateSelected = { date ->
+                selectedDate = date
+            }
+        )
+
+        Spacer(modifier = Modifier.height(10.dp))
+
+        Button(
+            onClick = {
+                textInformation = "Username: $username\n" +
+                        "Password: $password\n" +
+                        "Gender: $selectedGender\n" +
+                        "E-mail: $email\n" +
+                        "Birthday: $selectedDate"
+            }
+        ) {
+            Text(text = "Show Information")
+        }
+
+        // Show information
+        if (textInformation.isNotEmpty()) {
+            Column(
+                modifier = Modifier
+                    .width(400.dp)
+                    .padding(all = 16.dp)
+                    .border(
+                        width = 1.dp,
+                        color = Color.Black,
+                        shape = RoundedCornerShape(size = 20.dp)
+                    )
+                    .padding(all = 16.dp)
+            ) {
+                Text(
+                    text = "Register Information:",
+                    fontSize = 20.sp,
+                    fontWeight = FontWeight.Bold
+                )
+
+                Text(
+                    text = textInformation,
+                    fontSize = 18.sp
+                )
+            }
+
+        }
+    }
+}
+
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
